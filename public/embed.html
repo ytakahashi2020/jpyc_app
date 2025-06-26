@@ -621,7 +621,7 @@
                         <div class="transfer-section">
                             <div class="input-group">
                                 <input type="number" id="transferAmount" placeholder="寄付金額 (JPYC)" value="1" step="0.000001" min="0">
-                                <button id="donateBtn" class="btn btn-success" onclick="makeDonation()">寄付する</button>
+                                <button id="donateBtn" class="btn btn-success" onclick="makeDonation()" data-original-text="寄付する">寄付する</button>
                             </div>
                             <div id="transfer-result"></div>
                         </div>
@@ -1124,10 +1124,13 @@
         }
         
         // 寄付実行
-        async function makeDonation() {
+        window.makeDonation = async function() {
+            console.log('makeDonation called');
             const amount = parseFloat(document.getElementById('transferAmount').value);
             const resultDiv = document.getElementById('transfer-result');
             const donateBtn = document.getElementById('donateBtn');
+            
+            console.log('donateBtn:', donateBtn);
             
             // バリデーション
             if (isNaN(amount) || amount <= 0) {
@@ -1141,9 +1144,19 @@
             }
             
             // ボタンの状態を変更
-            const originalText = donateBtn.textContent;
-            donateBtn.textContent = currentLanguage === 'ja' ? '送付中...' : 'Sending...';
-            donateBtn.disabled = true;
+            let originalText = t('donate');
+            try {
+                if (donateBtn) {
+                    originalText = donateBtn.textContent || originalText;
+                    donateBtn.textContent = currentLanguage === 'ja' ? '送付中...' : 'Sending...';
+                    donateBtn.disabled = true;
+                    console.log('Button state changed to:', donateBtn.textContent);
+                } else {
+                    console.error('Donate button not found!');
+                }
+            } catch (e) {
+                console.error('Error changing button state:', e);
+            }
             
             resultDiv.innerHTML = `<div class="loading">${t('donationInProgress')}</div>`;
             
@@ -1171,13 +1184,17 @@
                 }
                 
                 // ボタンの状態を元に戻す
-                donateBtn.textContent = originalText;
-                donateBtn.disabled = false;
+                if (donateBtn) {
+                    donateBtn.textContent = originalText;
+                    donateBtn.disabled = false;
+                }
             } catch (error) {
                 resultDiv.innerHTML = `<div class="error">${t('communicationError')}: ${error.message}</div>`;
                 // ボタンの状態を元に戻す
-                donateBtn.textContent = originalText;
-                donateBtn.disabled = false;
+                if (donateBtn) {
+                    donateBtn.textContent = originalText;
+                    donateBtn.disabled = false;
+                }
             }
         }
         
