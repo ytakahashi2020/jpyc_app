@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPYC Wallet Monitor - 埋め込みデモ</title>
+    <title>JPYC Donation Widget - Embed Demo</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -81,159 +81,233 @@
             border: 1px solid #ccc;
             border-radius: 8px;
         }
+        
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.95);
+            padding: 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .lang-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.7);
+            color: #4338ca;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(67,56,202,0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-btn.active {
+            background: #4338ca;
+            color: white;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
-    <h1>💝 JPYC寄付ウィジェット - 埋め込みデモページ</h1>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
+        <button class="lang-btn" onclick="switchLanguage('en')">🇺🇸 English</button>
+    </div>
+
+    <h1 data-ja="💝 JPYC寄付ウィジェット - 埋め込みマニュアル" data-en="💝 JPYC Donation Widget - Embed Manual">💝 JPYC寄付ウィジェット - 埋め込みマニュアル</h1>
+    <p style="text-align: center; margin-bottom: 30px; color: #666; font-size: 16px;" data-ja="🌐 <strong>https://jpyc-donate.vercel.app/</strong> - いつでも使える寄付ウィジェット" data-en="🌐 <strong>https://jpyc-donate.vercel.app/</strong> - Always available donation widget">
+        🌐 <strong>https://jpyc-donate.vercel.app/</strong> - いつでも使える寄付ウィジェット
+    </p>
     
     <div class="demo-section">
-        <h2 class="demo-title">📋 基本的な埋め込み方法</h2>
-        <p>以下のHTMLコードをあなたのウェブサイトに貼り付けるだけで埋め込み完了です：</p>
+        <h2 class="demo-title" data-ja="📋 基本的な埋め込み方法" data-en="📋 Basic Embed Method">📋 基本的な埋め込み方法</h2>
+        <p data-ja="<strong>重要:</strong> 埋め込み時には必ず <code>recipient</code> パラメータであなたのウォレットアドレスを指定してください：" data-en="<strong>Important:</strong> When embedding, you must specify your wallet address with the <code>recipient</code> parameter:"><strong>重要:</strong> 埋め込み時には必ず <code>recipient</code> パラメータであなたのウォレットアドレスを指定してください：</p>
         
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress" 
         width="800" 
-        height="400" 
+        height="600" 
         frameborder="0"
         style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
+        
+        <div class="note">
+            <span data-ja="<strong>⚠️ 必須設定:</strong> <code>0xYourWalletAddress</code> の部分をあなたの実際のウォレットアドレスに変更してください。<br>アドレスを指定しないとエラーページが表示されます。" data-en="<strong>⚠️ Required Setup:</strong> Replace <code>0xYourWalletAddress</code> with your actual wallet address.<br>If no address is specified, an error page will be displayed."><strong>⚠️ 必須設定:</strong> <code>0xYourWalletAddress</code> の部分をあなたの実際のウォレットアドレスに変更してください。<br>
+            アドレスを指定しないとエラーページが表示されます。</span>
+        </div>
         
         <div class="note success">
-            <strong>✅ メリット:</strong>
+            <span data-ja="<strong>✅ メリット:</strong>" data-en="<strong>✅ Benefits:</strong>"><strong>✅ メリット:</strong></span>
             <ul>
-                <li>コピー&ペーストだけで簡単埋め込み</li>
-                <li>MetaMask連携でJPYC寄付機能</li>
-                <li>セキュリティが確保される（iframe内で独立動作）</li>
-                <li>あなたのサイトのデザインに影響しない</li>
-                <li>寄付先アドレスをURL パラメータで自由設定可能</li>
+                <li data-ja="MetaMask連携でJPYC寄付機能" data-en="JPYC donation functionality with MetaMask integration">MetaMask連携でJPYC寄付機能</li>
+                <li data-ja="セキュリティが確保される（iframe内で独立動作）" data-en="Security is ensured (independent operation within iframe)">セキュリティが確保される（iframe内で独立動作）</li>
+                <li data-ja="あなたのサイトのデザインに影響しない" data-en="Does not affect your site's design">あなたのサイトのデザインに影響しない</li>
+                <li data-ja="寄付は直接あなたのウォレットに送金" data-en="Donations are sent directly to your wallet">寄付は直接あなたのウォレットに送金</li>
             </ul>
         </div>
     </div>
     
     <div class="demo-section">
-        <h2 class="demo-title">🎨 サイズ別デモ</h2>
+        <h2 class="demo-title" data-ja="⚠️ エラー例：アドレス未指定" data-en="⚠️ Error Example: Address Not Specified">⚠️ エラー例：アドレス未指定</h2>
+        <p data-ja="recipientパラメータを指定しないとこのようなエラーが表示されます：" data-en="If you don't specify the recipient parameter, this error will be displayed:">recipientパラメータを指定しないとこのようなエラーが表示されます：</p>
         
-        <h3>📱 コンパクト版（400×400）</h3>
         <div class="embed-container">
-            <iframe src="/embed.html?mode=compact" 
+            <iframe src="https://jpyc-donate.vercel.app/embed.html" 
+                    width="600" 
+                    height="300" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        
+        <div class="note">
+            <span data-ja="<strong>🚨 このエラーを避けるために:</strong><br>必ず <code>?recipient=0xYourWalletAddress</code> パラメータを追加してください。" data-en="<strong>🚨 To avoid this error:</strong><br>Always add the <code>?recipient=0xYourWalletAddress</code> parameter."><strong>🚨 このエラーを避けるために:</strong><br>
+            必ず <code>?recipient=0xYourWalletAddress</code> パラメータを追加してください。</span>
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2 class="demo-title" data-ja="🎨 サイズ別デモ" data-en="🎨 Size Demos">🎨 サイズ別デモ</h2>
+        
+        <h3 data-ja="📱 コンパクト版（400×400）" data-en="📱 Compact Version (400×400)">📱 コンパクト版（400×400）</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&mode=compact" 
                     width="400" 
-                    height="400" 
+                    height="500" 
                     frameborder="0"
                     class="iframe-demo"
                     style="border-radius: 8px;">
             </iframe>
         </div>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?mode=compact" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&mode=compact" 
         width="400" 
-        height="400" 
+        height="500" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>🖥️ 横長版（800×400）推奨</h3>
+        <h3 data-ja="🖥️ 横長版（800×400）推奨" data-en="🖥️ Wide Version (800×400) Recommended">🖥️ 横長版（800×400）推奨</h3>
         <div class="embed-container">
-            <iframe src="/embed.html" 
+            <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315" 
                     width="800" 
-                    height="400" 
+                    height="600" 
                     frameborder="0"
                     class="iframe-demo"
                     style="border-radius: 8px;">
             </iframe>
         </div>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress" 
         width="800" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
     </div>
     
     <div class="demo-section">
-        <h2 class="demo-title">🎨 テーマ選択</h2>
+        <h2 class="demo-title" data-ja="🎨 テーマ選択" data-en="🎨 Theme Selection">🎨 テーマ選択</h2>
         
-        <h3>🔥 クールテーマ（デフォルト）</h3>
+        <h3 data-ja="🔥 クールテーマ（デフォルト）" data-en="🔥 Cool Theme (Default)">🔥 クールテーマ（デフォルト）</h3>
         <div class="embed-container">
-            <iframe src="/embed.html?theme=cool" 
+            <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=cool" 
                     width="600" 
-                    height="400" 
+                    height="600" 
                     frameborder="0"
                     class="iframe-demo"
                     style="border-radius: 8px;">
             </iframe>
         </div>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?theme=cool" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=cool" 
         width="600" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>🌸 可愛いテーマ</h3>
+        <h3 data-ja="🌸 可愛いテーマ" data-en="🌸 Cute Theme">🌸 可愛いテーマ</h3>
         <div class="embed-container">
-            <iframe src="/embed.html?theme=cute" 
+            <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=cute" 
                     width="600" 
-                    height="400" 
+                    height="600" 
                     frameborder="0"
                     class="iframe-demo"
                     style="border-radius: 8px;">
             </iframe>
         </div>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?theme=cute" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=cute" 
         width="600" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>📊 真面目テーマ</h3>
+        <h3 data-ja="📊 真面目テーマ" data-en="📊 Professional Theme">📊 真面目テーマ</h3>
         <div class="embed-container">
-            <iframe src="/embed.html?theme=professional" 
+            <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=professional" 
                     width="600" 
-                    height="400" 
+                    height="600" 
                     frameborder="0"
                     class="iframe-demo"
                     style="border-radius: 8px;">
             </iframe>
         </div>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?theme=professional" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=professional" 
         width="600" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
     </div>
     
     <div class="demo-section">
-        <h2 class="demo-title">⚙️ カスタマイズオプション</h2>
+        <h2 class="demo-title" data-ja="⚙️ カスタマイズオプション" data-en="⚙️ Customization Options">⚙️ カスタマイズオプション</h2>
         
-        <h3>📐 レスポンシブ対応</h3>
+        <h3 data-ja="📐 レスポンシブ対応" data-en="📐 Responsive Support">📐 レスポンシブ対応</h3>
+        <p data-ja="<code>width=\"100%\"</code> でスマホでも自動調整されます！" data-en="<code>width=\"100%\"</code> automatically adjusts for mobile!"><code>width="100%"</code> でスマホでも自動調整されます！</p>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress" 
         width="100%" 
-        height="400" 
+        height="600" 
         frameborder="0"
         style="max-width: 800px; min-width: 400px;"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>🎭 スタイル付き</h3>
+        <h3 data-ja="🎭 スタイル付き" data-en="🎭 Styled Version">🎭 スタイル付き</h3>
+        <p data-ja="<code>style=</code> の部分で影や角丸をつけられます！" data-en="The <code>style=</code> part adds shadows and rounded corners!"><code>style=</code> の部分で影や角丸をつけられます！</p>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress" 
         width="800" 
-        height="400" 
+        height="600" 
         frameborder="0"
         style="
             border-radius: 15px; 
@@ -242,99 +316,117 @@
         "&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>🎨 テーマ + コンパクト</h3>
+        <h3 data-ja="🎨 テーマ + コンパクト" data-en="🎨 Theme + Compact">🎨 テーマ + コンパクト</h3>
+        <p data-ja="<code>?theme=cute&mode=compact</code> で可愛いコンパクト版になります！" data-en="<code>?theme=cute&mode=compact</code> creates a cute compact version!"><code>?theme=cute&mode=compact</code> で可愛いコンパクト版になります！</p>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?theme=cute&mode=compact" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=cute&mode=compact" 
         width="400" 
-        height="400" 
+        height="500" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>💝 カスタム寄付先アドレス</h3>
+        <h3 data-ja="🌐 言語設定" data-en="🌐 Language Settings">🌐 言語設定</h3>
+        <p data-ja="<code>?lang=en</code> の部分で英語に切り替わります！" data-en="The <code>?lang=en</code> part switches to English!"><code>?lang=en</code> の部分で英語に切り替わります！</p>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?recipient=0xYourWalletAddress" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&lang=en" 
         width="800" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3>🌐 言語設定</h3>
+        <h3 data-ja="🎯 複数パラメータ組み合わせ" data-en="🎯 Multiple Parameter Combination">🎯 複数パラメータ組み合わせ</h3>
+        <p data-ja="<code>&</code> でつなげて複数の設定を同時に使えます！" data-en="Use <code>&</code> to connect multiple settings together!"><code>&</code> でつなげて複数の設定を同時に使えます！</p>
         <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?lang=en" 
+&lt;iframe src="https://jpyc-donate.vercel.app/embed.html?theme=cute&lang=en&recipient=0xYourWalletAddress" 
         width="800" 
-        height="400" 
-        frameborder="0"&gt;
-&lt;/iframe&gt;
-        </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
-        
-        <h3>🎯 複数パラメータ組み合わせ</h3>
-        <div class="code-block">
-&lt;iframe src="http://localhost:3001/embed.html?theme=cute&lang=en&recipient=0xYourWalletAddress" 
-        width="800" 
-        height="400" 
+        height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
         </div>
         <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
         
         <div class="note">
-            <strong>💡 パラメータ設定:</strong><br>
+            <span data-ja="<strong>💡 パラメータ設定:</strong><br>• <code>recipient</code>: 寄付先ウォレットアドレス（デフォルト: 0x961aEa560D4C38B08D9300D8219062Fe853c8315）<br>• <code>lang</code>: 言語設定（ja=日本語, en=英語, デフォルト: ja）<br>• <code>theme</code>: デザインテーマ（cool/cute/professional, デフォルト: cool）<br>• <code>mode</code>: 表示モード（compact, デフォルト: 通常）" data-en="<strong>💡 Parameter Settings:</strong><br>• <code>recipient</code>: Donation wallet address (default: 0x961aEa560D4C38B08D9300D8219062Fe853c8315)<br>• <code>lang</code>: Language setting (ja=Japanese, en=English, default: ja)<br>• <code>theme</code>: Design theme (cool/cute/professional, default: cool)<br>• <code>mode</code>: Display mode (compact, default: normal)"><strong>💡 パラメータ設定:</strong><br>
             • <code>recipient</code>: 寄付先ウォレットアドレス（デフォルト: 0x961aEa560D4C38B08D9300D8219062Fe853c8315）<br>
             • <code>lang</code>: 言語設定（ja=日本語, en=英語, デフォルト: ja）<br>
             • <code>theme</code>: デザインテーマ（cool/cute/professional, デフォルト: cool）<br>
-            • <code>mode</code>: 表示モード（compact, デフォルト: 通常）
+            • <code>mode</code>: 表示モード（compact, デフォルト: 通常）</span>
         </div>
     </div>
     
-    <div class="demo-section">
-        <h2 class="demo-title">🚀 本番環境での使用</h2>
-        
-        <div class="note">
-            <strong>📝 注意:</strong> 本番環境で使用する場合は、<code>localhost:3001</code> を実際のドメインに変更してください。
-        </div>
-        
-        <h3>例：本番環境用コード</h3>
-        <div class="code-block">
-&lt;iframe src="https://your-domain.com/embed.html" 
-        width="800" 
-        height="400" 
-        frameborder="0"
-        style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
-&lt;/iframe&gt;
-        </div>
-        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
-    </div>
     
     <div class="demo-section">
-        <h2 class="demo-title">📋 埋め込み方法の手順</h2>
+        <h2 class="demo-title" data-ja="📋 埋め込み方法の手順" data-en="📋 Embedding Steps">📋 埋め込み方法の手順</h2>
         <ol>
-            <li><strong>コードをコピー</strong> - 上記のHTMLコードをコピー</li>
-            <li><strong>ウェブサイトに貼り付け</strong> - HTMLファイルの適切な場所に貼り付け</li>
-            <li><strong>サイズ調整</strong> - widthとheightを必要に応じて調整</li>
-            <li><strong>完了</strong> - ページをリロードして動作確認</li>
+            <li data-ja="<strong>コードをコピー</strong> - 上記のHTMLコードをコピー" data-en="<strong>Copy Code</strong> - Copy the HTML code above"><strong>コードをコピー</strong> - 上記のHTMLコードをコピー</li>
+            <li data-ja="<strong>ウェブサイトに貼り付け</strong> - HTMLファイルの適切な場所に貼り付け" data-en="<strong>Paste to Website</strong> - Paste in the appropriate location in your HTML file"><strong>ウェブサイトに貼り付け</strong> - HTMLファイルの適切な場所に貼り付け</li>
+            <li data-ja="<strong>サイズ調整</strong> - widthとheightを必要に応じて調整" data-en="<strong>Adjust Size</strong> - Adjust width and height as needed"><strong>サイズ調整</strong> - widthとheightを必要に応じて調整</li>
+            <li data-ja="<strong>完了</strong> - ページをリロードして動作確認" data-en="<strong>Done</strong> - Reload the page to check operation"><strong>完了</strong> - ページをリロードして動作確認</li>
         </ol>
         
         <div class="note success">
-            <strong>🎉 これだけで完了！</strong><br>
-            訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC寄付ができます。
+            <span data-ja="<strong>🎉 これだけで完了！</strong><br>訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC寄付ができます。" data-en="<strong>🎉 That's it!</strong><br>Visitors can donate JPYC directly through the embedded widget using MetaMask."><strong>🎉 これだけで完了！</strong><br>
+            訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC寄付ができます。</span>
         </div>
     </div>
 
     <script>
+        let currentLang = 'ja';
+        
         function copyCode(text) {
             navigator.clipboard.writeText(text.trim()).then(() => {
-                alert('📋 コードをクリップボードにコピーしました！');
+                if (currentLang === 'ja') {
+                    alert('📋 コードをクリップボードにコピーしました！');
+                } else {
+                    alert('📋 Code copied to clipboard!');
+                }
             }).catch(() => {
-                alert('❌ コピーに失敗しました。手動でコピーしてください。');
+                if (currentLang === 'ja') {
+                    alert('❌ コピーに失敗しました。手動でコピーしてください。');
+                } else {
+                    alert('❌ Failed to copy. Please copy manually.');
+                }
             });
         }
+        
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update all content with data attributes
+            document.querySelectorAll('[data-ja][data-en]').forEach(element => {
+                if (lang === 'ja') {
+                    element.innerHTML = element.getAttribute('data-ja');
+                } else {
+                    element.innerHTML = element.getAttribute('data-en');
+                }
+            });
+            
+            // Save language preference
+            localStorage.setItem('demo-lang', lang);
+        }
+        
+        // Load saved language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('demo-lang') || 'ja';
+            if (savedLang !== 'ja') {
+                const langBtn = document.querySelector(`.lang-btn[onclick="switchLanguage('${savedLang}')"]`);
+                if (langBtn) {
+                    langBtn.click();
+                }
+            }
+        });
     </script>
 </body>
 </html>
