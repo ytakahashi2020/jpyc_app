@@ -586,10 +586,11 @@
         };
         
         // ページ読み込み時に初回データ取得とMetaMask確認
-        window.onload = function() {
+        window.onload = async function() {
             checkMetaMaskAvailability();
-            checkWalletConnection();
-            refreshInfo();
+            await checkWalletConnection();
+            // 少し待ってから情報取得（接続状態確定後）
+            setTimeout(refreshInfo, 500);
         };
         
         // MetaMask利用可能性チェック
@@ -763,6 +764,19 @@
         // JPYC情報を取得・表示
         async function refreshInfo() {
             const infoDiv = document.getElementById('jpyc-info');
+            
+            // ウォレット未接続の場合
+            if (!walletConnected) {
+                infoDiv.innerHTML = '<div class="loading">🦊 MetaMaskを接続してください</div>';
+                return;
+            }
+            
+            // 間違ったネットワークの場合
+            if (!isCorrectNetwork) {
+                infoDiv.innerHTML = '<div class="error">⚠️ Polygon Mainnetに切り替えてください</div>';
+                return;
+            }
+            
             infoDiv.innerHTML = '<div class="loading">データを取得中...</div>';
             
             try {
@@ -789,7 +803,7 @@
                         <div class="timestamp">最終更新: ${new Date(result.data.timestamp).toLocaleString('ja-JP')}</div>
                     `;
                 } else {
-                    infoDiv.innerHTML = `<div class="error">エラー: ${result.error}</div>`;
+                    infoDiv.innerHTML = `<div class="error">データ取得エラー: ${result.error}</div>`;
                 }
             } catch (error) {
                 infoDiv.innerHTML = `<div class="error">通信エラー: ${error.message}</div>`;
