@@ -29,23 +29,46 @@
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 20px;
             text-align: center;
         }
         
         .header h1 {
-            font-size: 1.5em;
-            margin-bottom: 5px;
+            font-size: 1.3em;
+            margin-bottom: 3px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
-            font-size: 0.9em;
+            font-size: 0.85em;
             opacity: 0.9;
         }
         
         .content {
             padding: 15px;
+        }
+        
+        /* 横長レイアウト用 */
+        .horizontal-layout {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .left-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        @media (max-width: 700px) {
+            .horizontal-layout {
+                flex-direction: column;
+            }
         }
         
         .card {
@@ -313,41 +336,40 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-title">📊 JPYC基本情報</div>
-                <div id="jpyc-info" class="loading">
-                    データを読み込み中...
+            <!-- 横長レイアウト -->
+            <div class="horizontal-layout">
+                <!-- 左カラム -->
+                <div class="left-column">
+                    <div class="card">
+                        <div class="card-title">📊 JPYC基本情報</div>
+                        <div id="jpyc-info" class="loading">
+                            データを読み込み中...
+                        </div>
+                        <button class="btn" onclick="refreshInfo()">🔄 更新</button>
+                        <button class="btn" onclick="openPolygonscan()">📊 Polygonscan</button>
+                    </div>
                 </div>
-                <button class="btn" onclick="refreshInfo()">🔄 更新</button>
-                <button class="btn" onclick="startAutoRefresh()">⏰ 自動更新開始</button>
-                <button class="btn" onclick="stopAutoRefresh()">⏹️ 自動更新停止</button>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">💸 転送テスト</div>
-                <div class="transfer-section">
-                    <div class="input-group">
-                        <input type="text" id="recipientAddress" placeholder="送信先アドレス (0x...)" style="font-family: monospace;">
+                
+                <!-- 右カラム -->
+                <div class="right-column">
+                    <div class="card">
+                        <div class="card-title">💸 転送テスト</div>
+                        <div class="transfer-section">
+                            <div class="input-group">
+                                <input type="text" id="recipientAddress" placeholder="送信先アドレス (0x...)" style="font-family: monospace;">
+                            </div>
+                            <div class="input-group">
+                                <input type="number" id="transferAmount" placeholder="転送金額 (JPYC)" value="1" step="0.000001" min="0">
+                                <button class="btn" onclick="testTransfer()">送信テスト</button>
+                            </div>
+                            <div class="quick-addresses">
+                                <small>クイック選択:</small>
+                                <button class="btn" style="font-size: 0.8em; padding: 4px 8px;" onclick="setQuickAddress('burn')">🔥 Burn Address</button>
+                                <button class="btn" style="font-size: 0.8em; padding: 4px 8px;" onclick="setQuickAddress('test')">🧪 Test Address</button>
+                            </div>
+                            <div id="transfer-result"></div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <input type="number" id="transferAmount" placeholder="転送金額 (JPYC)" value="1" step="0.000001" min="0">
-                        <button class="btn" onclick="testTransfer()">送信テスト</button>
-                    </div>
-                    <div class="quick-addresses">
-                        <small>クイック選択:</small>
-                        <button class="btn" style="font-size: 0.8em; padding: 4px 8px;" onclick="setQuickAddress('burn')">🔥 Burn Address</button>
-                        <button class="btn" style="font-size: 0.8em; padding: 4px 8px;" onclick="setQuickAddress('test')">🧪 Test Address</button>
-                    </div>
-                    <div id="transfer-result"></div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">🔗 便利なリンク</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                    <button class="btn" onclick="openPolygonscan()">📊 Polygonscan</button>
-                    <button class="btn" onclick="openContract()">📄 コントラクト</button>
-                    <button class="btn" onclick="copyAddress()">📋 アドレスコピー</button>
                 </div>
             </div>
         </div>
