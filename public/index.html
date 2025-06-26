@@ -1448,12 +1448,18 @@
         async function makeDonation() {
             const amount = parseFloat(document.getElementById('transferAmount').value);
             const resultDiv = document.getElementById('transfer-result');
+            const donateBtn = document.querySelector('button[onclick="makeDonation()"]');
             
             // バリデーション
             if (isNaN(amount) || amount <= 0) {
                 resultDiv.innerHTML = `<div class="error">${t('validAmountRequired')}</div>`;
                 return;
             }
+            
+            // ボタンの状態を変更
+            const originalText = donateBtn.textContent;
+            donateBtn.textContent = currentLanguage === 'ja' ? '送付中...' : 'Sending...';
+            donateBtn.disabled = true;
             
             // デバッグ情報
             console.log('Donation details:', {
@@ -1479,12 +1485,18 @@
                     `;
                     
                     // トランザクション確認を開始
-                    await waitForTransactionConfirmation(result.txHash, amount, resultDiv);
+                    await waitForTransactionConfirmation(result.txHash, amount, resultDiv, donateBtn, originalText);
                 } else {
                     resultDiv.innerHTML = `<div class="error">${t('donationFailed')}: ${result.reason || result.error}</div>`;
+                    // ボタンの状態を元に戻す
+                    donateBtn.textContent = originalText;
+                    donateBtn.disabled = false;
                 }
             } catch (error) {
                 resultDiv.innerHTML = `<div class="error">${t('communicationError')}: ${error.message}</div>`;
+                // ボタンの状態を元に戻す
+                donateBtn.textContent = originalText;
+                donateBtn.disabled = false;
             }
         }
         
@@ -1557,7 +1569,7 @@
         }
         
         // トランザクション確認を待つ
-        async function waitForTransactionConfirmation(txHash, amount, resultDiv) {
+        async function waitForTransactionConfirmation(txHash, amount, resultDiv, donateBtn, originalText) {
             const maxWaitTime = 180000; // 3分
             const checkInterval = 3000; // 3秒間隔
             const startTime = Date.now();
@@ -1579,14 +1591,25 @@
                                     <div>${currentLanguage === 'ja' ? '寄付金額' : 'Donation Amount'}: ${amount} JPYC</div>
                                     <div>${currentLanguage === 'ja' ? '寄付先' : 'Recipient'}: ${donationAddress}</div>
                                     <div class="tx-hash">Hash: ${txHash}</div>
+                                    <div class="polygonscan-btn">
+                                        <a href="https://polygonscan.com/tx/${txHash}" target="_blank" class="btn btn-secondary">
+                                            📊 Polygonscan
+                                        </a>
+                                    </div>
                                 </div>
                             `;
+                            // ボタンの状態を元に戻す
+                            donateBtn.textContent = originalText;
+                            donateBtn.disabled = false;
                             // 寄付後に情報を更新
                             setTimeout(refreshInfo, 3000);
                             return;
                         } else {
                             // 失敗
                             resultDiv.innerHTML = `<div class="error">${t('donationFailed')}: Transaction failed</div>`;
+                            // ボタンの状態を元に戻す
+                            donateBtn.textContent = originalText;
+                            donateBtn.disabled = false;
                             return;
                         }
                     }
@@ -1604,8 +1627,16 @@
                     ${currentLanguage === 'ja' ? 'トランザクション送信完了' : 'Transaction sent'}<br>
                     ${currentLanguage === 'ja' ? '確認には時間がかかる場合があります' : 'Confirmation may take some time'}<br>
                     <div class="tx-hash">Hash: ${txHash}</div>
+                    <div class="polygonscan-btn">
+                        <a href="https://polygonscan.com/tx/${txHash}" target="_blank" class="btn btn-secondary">
+                            📊 Polygonscan
+                        </a>
+                    </div>
                 </div>
             `;
+            // ボタンの状態を元に戻す
+            donateBtn.textContent = originalText;
+            donateBtn.disabled = false;
         }
         
         // 自動更新開始

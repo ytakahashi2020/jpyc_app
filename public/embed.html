@@ -1126,6 +1126,7 @@
         async function makeDonation() {
             const amount = parseFloat(document.getElementById('transferAmount').value);
             const resultDiv = document.getElementById('transfer-result');
+            const donateBtn = document.querySelector('button[onclick="makeDonation()"]');
             
             // バリデーション
             if (isNaN(amount) || amount <= 0) {
@@ -1137,6 +1138,11 @@
                 resultDiv.innerHTML = `<div class="error">${t('embedErrorMessage')}</div>`;
                 return;
             }
+            
+            // ボタンの状態を変更
+            const originalText = donateBtn.textContent;
+            donateBtn.textContent = currentLanguage === 'ja' ? '送付中...' : 'Sending...';
+            donateBtn.disabled = true;
             
             resultDiv.innerHTML = `<div class="loading">${t('donationInProgress')}</div>`;
             
@@ -1150,6 +1156,11 @@
                             <strong>🙏 ${t('donationSuccess')}</strong><br>
                             ${currentLanguage === 'ja' ? '寄付金額' : 'Donation Amount'}: ${amount} JPYC<br>
                             Transaction Hash: <span class="address-display">${result.txHash}</span><br>
+                            <div class="polygonscan-btn">
+                                <a href="https://polygonscan.com/tx/${result.txHash}" target="_blank" class="btn btn-secondary">
+                                    📊 Polygonscan
+                                </a>
+                            </div>
                         </div>
                     `;
                     // 寄付後に情報を更新
@@ -1157,8 +1168,15 @@
                 } else {
                     resultDiv.innerHTML = `<div class="error">${t('donationFailed')}: ${result.reason || result.error}</div>`;
                 }
+                
+                // ボタンの状態を元に戻す
+                donateBtn.textContent = originalText;
+                donateBtn.disabled = false;
             } catch (error) {
                 resultDiv.innerHTML = `<div class="error">${t('communicationError')}: ${error.message}</div>`;
+                // ボタンの状態を元に戻す
+                donateBtn.textContent = originalText;
+                donateBtn.disabled = false;
             }
         }
         
