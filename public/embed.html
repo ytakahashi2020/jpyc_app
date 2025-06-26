@@ -609,7 +609,6 @@
                             データを読み込み中...
                         </div>
                         <button class="btn" onclick="refreshInfo()">🔄 更新</button>
-                        <button class="btn btn-secondary" onclick="openPolygonscan()">📊 Polygonscan</button>
                         <button class="btn btn-secondary" onclick="openManual()">📖 埋め込みマニュアル</button>
                     </div>
                 </div>
@@ -1151,7 +1150,6 @@
                             <strong>🙏 ${t('donationSuccess')}</strong><br>
                             ${currentLanguage === 'ja' ? '寄付金額' : 'Donation Amount'}: ${amount} JPYC<br>
                             Transaction Hash: <span class="address-display">${result.txHash}</span><br>
-                            <a href="https://polygonscan.com/tx/${result.txHash}" target="_blank" class="btn btn-success" style="margin-top: 10px;">📊 ${t('polygonscan')}</a>
                         </div>
                     `;
                     // 寄付後に情報を更新

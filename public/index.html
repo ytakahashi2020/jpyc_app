@@ -1579,9 +1579,6 @@
                                     <div>${currentLanguage === 'ja' ? '寄付金額' : 'Donation Amount'}: ${amount} JPYC</div>
                                     <div>${currentLanguage === 'ja' ? '寄付先' : 'Recipient'}: ${donationAddress}</div>
                                     <div class="tx-hash">Hash: ${txHash}</div>
-                                    <div style="margin-top: 12px;">
-                                        <a href="https://polygonscan.com/tx/${txHash}" target="_blank" class="btn btn-success">📊 ${t('polygonscan')}</a>
-                                    </div>
                                 </div>
                             `;
                             // 寄付後に情報を更新
@@ -1607,9 +1604,6 @@
                     ${currentLanguage === 'ja' ? 'トランザクション送信完了' : 'Transaction sent'}<br>
                     ${currentLanguage === 'ja' ? '確認には時間がかかる場合があります' : 'Confirmation may take some time'}<br>
                     <div class="tx-hash">Hash: ${txHash}</div>
-                    <div style="margin-top: 12px;">
-                        <a href="https://polygonscan.com/tx/${txHash}" target="_blank" class="btn btn-success">📊 ${t('polygonscan')}</a>
-                    </div>
                 </div>
             `;
         }
