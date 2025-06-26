@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPYC Wallet Monitor - 埋め込みデモ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .demo-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .demo-title {
+            color: #333;
+            border-bottom: 2px solid #4facfe;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .embed-container {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fafafa;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .copy-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .copy-btn:hover {
+            background: #3d8bfe;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .iframe-demo {
+            resize: both;
+            overflow: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🦊 JPYC Wallet Monitor - 埋め込みデモページ</h1>
+    
+    <div class="demo-section">
+        <h2 class="demo-title">📋 基本的な埋め込み方法</h2>
+        <p>以下のHTMLコードをあなたのウェブサイトに貼り付けるだけで埋め込み完了です：</p>
+        
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html" 
+        width="800" 
+        height="600" 
+        frameborder="0"
+        style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <div class="note success">
+            <strong>✅ メリット:</strong>
+            <ul>
+                <li>コピー&ペーストだけで簡単埋め込み</li>
+                <li>MetaMask連携も完全に動作</li>
+                <li>セキュリティが確保される（iframe内で独立動作）</li>
+                <li>あなたのサイトのデザインに影響しない</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2 class="demo-title">🎨 サイズ別デモ</h2>
+        
+        <h3>📱 コンパクト版（400×500）</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html?mode=compact" 
+                    width="400" 
+                    height="500" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?mode=compact" 
+        width="400" 
+        height="500" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🖥️ 標準版（800×600）</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html" 
+                    width="800" 
+                    height="600" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html" 
+        width="800" 
+        height="600" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2 class="demo-title">⚙️ カスタマイズオプション</h2>
+        
+        <h3>📐 レスポンシブ対応</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html" 
+        width="100%" 
+        height="600" 
+        frameborder="0"
+        style="max-width: 800px; min-width: 400px;"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🎭 スタイル付き</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html" 
+        width="800" 
+        height="600" 
+        frameborder="0"
+        style="
+            border-radius: 15px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        "&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2 class="demo-title">🚀 本番環境での使用</h2>
+        
+        <div class="note">
+            <strong>📝 注意:</strong> 本番環境で使用する場合は、<code>localhost:3001</code> を実際のドメインに変更してください。
+        </div>
+        
+        <h3>例：本番環境用コード</h3>
+        <div class="code-block">
+&lt;iframe src="https://your-domain.com/embed.html" 
+        width="800" 
+        height="600" 
+        frameborder="0"
+        style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+    </div>
+    
+    <div class="demo-section">
+        <h2 class="demo-title">📋 埋め込み方法の手順</h2>
+        <ol>
+            <li><strong>コードをコピー</strong> - 上記のHTMLコードをコピー</li>
+            <li><strong>ウェブサイトに貼り付け</strong> - HTMLファイルの適切な場所に貼り付け</li>
+            <li><strong>サイズ調整</strong> - widthとheightを必要に応じて調整</li>
+            <li><strong>完了</strong> - ページをリロードして動作確認</li>
+        </ol>
+        
+        <div class="note success">
+            <strong>🎉 これだけで完了！</strong><br>
+            訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC情報を確認・操作できます。
+        </div>
+    </div>
+
+    <script>
+        function copyCode(text) {
+            navigator.clipboard.writeText(text.trim()).then(() => {
+                alert('📋 コードをクリップボードにコピーしました！');
+            }).catch(() => {
+                alert('❌ コピーに失敗しました。手動でコピーしてください。');
+            });
+        }
+    </script>
+</body>
+</html>
