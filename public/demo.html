@@ -120,6 +120,35 @@
             color: white;
             transform: scale(1.05);
         }
+        
+        /* Back Button */
+        .back-button {
+            text-align: left;
+            margin: 20px 0 10px 0;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.95);
+            color: #4338ca;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .back-link:hover {
+            background: #4338ca;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 56, 202, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -127,6 +156,11 @@
     <div class="language-selector">
         <button class="lang-btn active" onclick="switchLanguage('ja')">🇯🇵 日本語</button>
         <button class="lang-btn" onclick="switchLanguage('en')">🇺🇸 English</button>
+    </div>
+
+    <!-- Back to Main Button -->
+    <div class="back-button">
+        <a href="/" class="back-link" data-ja="← メインページに戻る" data-en="← Back to Main">← メインページに戻る</a>
     </div>
 
     <h1 data-ja="💝 JPYC寄付ウィジェット - 埋め込みマニュアル" data-en="💝 JPYC Donation Widget - Embed Manual">💝 JPYC寄付ウィジェット - 埋め込みマニュアル</h1>
@@ -206,7 +240,7 @@
         </div>
         <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)" data-ja="📋 コピー" data-en="📋 Copy">📋 コピー</button>
         
-        <h3 data-ja="🖥️ 横長版（800×400）推奨" data-en="🖥️ Wide Version (800×400) Recommended">🖥️ 横長版（800×400）推奨</h3>
+        <h3 data-ja="🖥️ 横長版（800×600）推奨" data-en="🖥️ Wide Version (800×600) Recommended">🖥️ 横長版（800×600）推奨</h3>
         <div class="embed-container">
             <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315" 
                     width="800" 
@@ -232,7 +266,7 @@
         <h3 data-ja="🔥 クールテーマ（デフォルト）" data-en="🔥 Cool Theme (Default)">🔥 クールテーマ（デフォルト）</h3>
         <div class="embed-container">
             <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=cool" 
-                    width="600" 
+                    width="800" 
                     height="600" 
                     frameborder="0"
                     class="iframe-demo"
@@ -241,7 +275,7 @@
         </div>
         <div class="code-block">
 &lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=cool" 
-        width="600" 
+        width="800" 
         height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
@@ -251,7 +285,7 @@
         <h3 data-ja="🌸 可愛いテーマ" data-en="🌸 Cute Theme">🌸 可愛いテーマ</h3>
         <div class="embed-container">
             <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=cute" 
-                    width="600" 
+                    width="800" 
                     height="600" 
                     frameborder="0"
                     class="iframe-demo"
@@ -260,7 +294,7 @@
         </div>
         <div class="code-block">
 &lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=cute" 
-        width="600" 
+        width="800" 
         height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
@@ -270,7 +304,7 @@
         <h3 data-ja="📊 真面目テーマ" data-en="📊 Professional Theme">📊 真面目テーマ</h3>
         <div class="embed-container">
             <iframe src="/embed.html?recipient=0x961aEa560D4C38B08D9300D8219062Fe853c8315&theme=professional" 
-                    width="600" 
+                    width="800" 
                     height="600" 
                     frameborder="0"
                     class="iframe-demo"
@@ -279,7 +313,7 @@
         </div>
         <div class="code-block">
 &lt;iframe src="https://jpyc-donate.vercel.app/embed.html?recipient=0xYourWalletAddress&theme=professional" 
-        width="600" 
+        width="800" 
         height="600" 
         frameborder="0"&gt;
 &lt;/iframe&gt;
