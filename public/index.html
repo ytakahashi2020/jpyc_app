@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPYC Polygon Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .info-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .timestamp {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 10px;
+        }
+        
+        .transfer-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        
+        .address-display {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        
+        .wallet-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .wallet-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        
+        .connection-mode {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .mode-server {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .mode-wallet {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+        }
+        
+        .network-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .network-correct {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .network-wrong {
+            background: #ff5722;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦊 JPYC Wallet Monitor</h1>
+            <p>MetaMask連携でJPYC情報表示・操作</p>
+        </div>
+        
+        <div class="content">
+            <!-- Wallet Connection Section -->
+            <div class="wallet-section">
+                <div class="wallet-status">
+                    <div class="wallet-info">
+                        <div id="wallet-status">🔌 ウォレット未接続</div>
+                        <div id="wallet-address" style="display: none;"></div>
+                        <div id="network-status" style="display: none;"></div>
+                    </div>
+                    <div>
+                        <button class="btn" id="connect-wallet-btn" onclick="connectWallet()">
+                            🦊 MetaMask接続
+                        </button>
+                        <button class="btn" id="disconnect-wallet-btn" onclick="disconnectWallet()" style="display: none;">
+                            🔌 接続解除
+                        </button>
+                        <button class="btn" id="switch-network-btn" onclick="switchToPolygon()" style="display: none;">
+                            🔄 Polygonに切り替え
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-title">📊 JPYC基本情報</div>
+                <div id="jpyc-info" class="loading">
+                    データを読み込み中...
+                </div>
+                <button class="btn" onclick="refreshInfo()">🔄 更新</button>
+                <button class="btn" onclick="startAutoRefresh()">⏰ 自動更新開始</button>
+                <button class="btn" onclick="stopAutoRefresh()">⏹️ 自動更新停止</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">💸 転送テスト</div>
+                <div class="transfer-section">
+                    <div class="input-group">
+                        <input type="text" id="recipientAddress" placeholder="送信先アドレス (0x...)" style="font-family: monospace;">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="transferAmount" placeholder="転送金額 (JPYC)" value="1" step="0.000001" min="0">
+                        <button class="btn" onclick="testTransfer()">送信テスト</button>
+                    </div>
+                    <div class="quick-addresses">
+                        <small>クイック選択:</small>
+                        <button class="btn" style="font-size: 0.8em; padding: 5px 10px;" onclick="setQuickAddress('burn')">🔥 Burn Address</button>
+                        <button class="btn" style="font-size: 0.8em; padding: 5px 10px;" onclick="setQuickAddress('test')">🧪 Test Address</button>
+                    </div>
+                    <div id="transfer-result"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">🔗 便利なリンク</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="btn" onclick="openPolygonscan()">📊 Polygonscan</button>
+                    <button class="btn" onclick="openContract()">📄 コントラクト</button>
+                    <button class="btn" onclick="copyAddress()">📋 アドレスコピー</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+        let currentAddress = null;
+        let walletConnected = false;
+        let walletAddress = null;
+        let isCorrectNetwork = false;
+        
+        // Polygon Mainnet の設定
+        const POLYGON_NETWORK = {
+            chainId: '0x89', // 137 in hex
+            chainName: 'Polygon Mainnet',
+            nativeCurrency: {
+                name: 'MATIC',
+                symbol: 'MATIC',
+                decimals: 18
+            },
+            rpcUrls: ['https://polygon-rpc.com'],
+            blockExplorerUrls: ['https://polygonscan.com']
+        };
+        
+        // ページ読み込み時に初回データ取得とMetaMask確認
+        window.onload = function() {
+            checkMetaMaskAvailability();
+            checkWalletConnection();
+            refreshInfo();
+        };
+        
+        // MetaMask利用可能性チェック
+        function checkMetaMaskAvailability() {
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('MetaMask detected');
+                // アカウント変更イベントリスナー
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                // ネットワーク変更イベントリスナー
+                window.ethereum.on('chainChanged', handleChainChanged);
+            } else {
+                console.log('MetaMask not detected');
+                const connectBtn = document.getElementById('connect-wallet-btn');
+                connectBtn.textContent = '❌ MetaMask未検出';
+                connectBtn.disabled = true;
+            }
+        }
+        
+        // ウォレット接続状態をチェック
+        async function checkWalletConnection() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        walletAddress = accounts[0];
+                        walletConnected = true;
+                        await checkNetwork();
+                        updateWalletUI();
+                    }
+                } catch (error) {
+                    console.error('Error checking wallet connection:', error);
+                }
+            }
+        }
+        
+        // MetaMask接続
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMaskがインストールされていません。\nhttps://metamask.io からインストールしてください。');
+                return;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                    walletAddress = accounts[0];
+                    walletConnected = true;
+                    await checkNetwork();
+                    updateWalletUI();
+                    
+                    // 接続完了後にデータを更新
+                    refreshInfo();
+                }
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                if (error.code === 4001) {
+                    alert('ウォレット接続がキャンセルされました。');
+                } else {
+                    alert('ウォレット接続エラーが発生しました。');
+                }
+            }
+        }
+        
+        // ネットワークチェック
+        async function checkNetwork() {
+            try {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                isCorrectNetwork = chainId === POLYGON_NETWORK.chainId;
+                updateNetworkStatus();
+            } catch (error) {
+                console.error('Error checking network:', error);
+            }
+        }
+        
+        // Polygonネットワークに切り替え
+        async function switchToPolygon() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: POLYGON_NETWORK.chainId }],
+                });
+            } catch (switchError) {
+                // ネットワークが追加されていない場合は追加を試みる
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [POLYGON_NETWORK],
+                        });
+                    } catch (addError) {
+                        console.error('Error adding network:', addError);
+                        alert('ネットワークの追加に失敗しました。');
+                    }
+                } else {
+                    console.error('Error switching network:', switchError);
+                    alert('ネットワークの切り替えに失敗しました。');
+                }
+            }
+        }
+        
+        // アカウント変更ハンドラー
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) {
+                walletConnected = false;
+                walletAddress = null;
+            } else {
+                walletAddress = accounts[0];
+                walletConnected = true;
+                checkNetwork();
+            }
+            updateWalletUI();
+            refreshInfo();
+        }
+        
+        // ネットワーク変更ハンドラー
+        function handleChainChanged(chainId) {
+            isCorrectNetwork = chainId === POLYGON_NETWORK.chainId;
+            updateWalletUI();
+            refreshInfo();
+        }
+        
+        // ウォレットUI更新
+        function updateWalletUI() {
+            const statusEl = document.getElementById('wallet-status');
+            const addressEl = document.getElementById('wallet-address');
+            const connectBtn = document.getElementById('connect-wallet-btn');
+            const disconnectBtn = document.getElementById('disconnect-wallet-btn');
+            const switchBtn = document.getElementById('switch-network-btn');
+            
+            if (walletConnected) {
+                statusEl.textContent = '🟢 ウォレット接続済み';
+                addressEl.textContent = walletAddress;
+                addressEl.className = 'wallet-address';
+                addressEl.style.display = 'block';
+                connectBtn.style.display = 'none';
+                disconnectBtn.style.display = 'inline-block';
+                
+                if (isCorrectNetwork) {
+                    switchBtn.style.display = 'none';
+                } else {
+                    switchBtn.style.display = 'inline-block';
+                }
+            } else {
+                statusEl.textContent = '🔌 ウォレット未接続';
+                addressEl.style.display = 'none';
+                connectBtn.style.display = 'inline-block';
+                disconnectBtn.style.display = 'none';
+                switchBtn.style.display = 'none';
+            }
+            
+            updateNetworkStatus();
+        }
+        
+        // ネットワーク状態更新
+        function updateNetworkStatus() {
+            const networkEl = document.getElementById('network-status');
+            
+            if (walletConnected) {
+                networkEl.style.display = 'block';
+                if (isCorrectNetwork) {
+                    networkEl.innerHTML = '<span class="network-status network-correct">🟢 Polygon Mainnet</span>';
+                } else {
+                    networkEl.innerHTML = '<span class="network-status network-wrong">⚠️ 間違ったネットワーク</span>';
+                }
+            } else {
+                networkEl.style.display = 'none';
+            }
+        }
+        
+        
+        // JPYC情報を取得・表示
+        async function refreshInfo() {
+            const infoDiv = document.getElementById('jpyc-info');
+            infoDiv.innerHTML = '<div class="loading">データを取得中...</div>';
+            
+            try {
+                // ウォレット専用: 直接MetaMaskから情報取得
+                const result = await getWalletJPYCInfo();
+                
+                if (result.success) {
+                    currentAddress = result.data.address;
+                    infoDiv.innerHTML = `
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">ウォレットアドレス (🦊 ウォレット)</div>
+                                <div class="info-value address-display">${result.data.address}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">JPYC残高</div>
+                                <div class="info-value">${result.data.balance.toLocaleString()} JPYC</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">総供給量</div>
+                                <div class="info-value">${result.data.totalSupply.toLocaleString()} JPYC</div>
+                            </div>
+                        </div>
+                        <div class="timestamp">最終更新: ${new Date(result.data.timestamp).toLocaleString('ja-JP')}</div>
+                    `;
+                } else {
+                    infoDiv.innerHTML = `<div class="error">エラー: ${result.error}</div>`;
+                }
+            } catch (error) {
+                infoDiv.innerHTML = `<div class="error">通信エラー: ${error.message}</div>`;
+            }
+        }
+        
+        // ウォレットから直接JPYC情報取得
+        async function getWalletJPYCInfo() {
+            if (!walletConnected || !isCorrectNetwork) {
+                return {
+                    success: false,
+                    error: 'ウォレットが接続されていないか、間違ったネットワークです'
+                };
+            }
+            
+            try {
+                // JPYC コントラクトアドレス (Polygon Mainnet)
+                const JPYC_CONTRACT = '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB';
+                
+                // ERC20の基本的なABIメソッド
+                const ABI = [
+                    'function totalSupply() view returns (uint256)',
+                    'function balanceOf(address) view returns (uint256)',
+                    'function isMinter(address) view returns (bool)'
+                ];
+                
+                // Web3プロバイダーを使ってコントラクト呼び出し
+                const totalSupplyHex = await window.ethereum.request({
+                    method: 'eth_call',
+                    params: [{
+                        to: JPYC_CONTRACT,
+                        data: '0x18160ddd' // totalSupply() のメソッドシグネチャ
+                    }, 'latest']
+                });
+                
+                const balanceHex = await window.ethereum.request({
+                    method: 'eth_call',
+                    params: [{
+                        to: JPYC_CONTRACT,
+                        data: '0x70a08231000000000000000000000000' + walletAddress.slice(2) // balanceOf(address)
+                    }, 'latest']
+                });
+                
+                // Hexから数値に変換 (18桁の小数点を考慮)
+                const totalSupply = parseInt(totalSupplyHex, 16) / Math.pow(10, 18);
+                const balance = parseInt(balanceHex, 16) / Math.pow(10, 18);
+                
+                return {
+                    success: true,
+                    data: {
+                        address: walletAddress,
+                        totalSupply,
+                        balance,
+                        timestamp: new Date().toISOString()
+                    }
+                };
+            } catch (error) {
+                console.error('Error getting wallet JPYC info:', error);
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+        
+        // 転送テスト
+        async function testTransfer() {
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const recipient = document.getElementById('recipientAddress').value.trim();
+            const resultDiv = document.getElementById('transfer-result');
+            
+            // バリデーション
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.innerHTML = '<div class="error">有効な金額を入力してください</div>';
+                return;
+            }
+            
+            if (!recipient) {
+                resultDiv.innerHTML = '<div class="error">送信先アドレスを入力してください</div>';
+                return;
+            }
+            
+            if (!recipient.startsWith('0x') || recipient.length !== 42) {
+                resultDiv.innerHTML = '<div class="error">有効なEthereumアドレスを入力してください (0x... 42文字)</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading">転送実行中...</div>';
+            
+            try {
+                // ウォレット専用: MetaMaskから直接転送
+                const result = await sendWalletTransfer(amount, recipient);
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <strong>転送成功！ (🦊 ウォレット)</strong><br>
+                            送信先: <span class="address-display">${recipient}</span><br>
+                            金額: ${amount} JPYC<br>
+                            Transaction Hash: <span class="address-display">${result.txHash}</span><br>
+                            <a href="https://polygonscan.com/tx/${result.txHash}" target="_blank" class="btn" style="margin-top: 10px;">📊 Polygonscanで確認</a><br>
+                            ${result.balanceBefore !== undefined ? `送信前残高: ${result.balanceBefore} JPYC<br>` : ''}
+                            ${result.balanceAfter !== undefined ? `送信後残高: ${result.balanceAfter} JPYC` : ''}
+                        </div>
+                    `;
+                    // 転送後に情報を更新
+                    setTimeout(refreshInfo, 3000);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">転送失敗: ${result.reason || result.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">通信エラー: ${error.message}</div>`;
+            }
+        }
+        
+        // ウォレットから直接転送
+        async function sendWalletTransfer(amount, recipient) {
+            if (!walletConnected || !isCorrectNetwork) {
+                return {
+                    success: false,
+                    error: 'ウォレットが接続されていないか、間違ったネットワークです'
+                };
+            }
+            
+            try {
+                // JPYC コントラクトアドレス (Polygon Mainnet)
+                const JPYC_CONTRACT = '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB';
+                
+                // 金額を Wei に変換 (18桁)
+                const amountWei = Math.floor(amount * Math.pow(10, 18)).toString(16);
+                const paddedAmount = amountWei.padStart(64, '0');
+                const paddedRecipient = recipient.slice(2).padStart(64, '0');
+                
+                // transfer(address,uint256) のメソッドシグネチャ
+                const transferData = '0xa9059cbb' + paddedRecipient + paddedAmount;
+                
+                // MetaMaskを通じてトランザクション送信
+                const txHash = await window.ethereum.request({
+                    method: 'eth_sendTransaction',
+                    params: [{
+                        from: walletAddress,
+                        to: JPYC_CONTRACT,
+                        data: transferData,
+                        gas: '0x5208', // 21000 gas
+                    }]
+                });
+                
+                return {
+                    success: true,
+                    txHash: txHash,
+                    message: 'ウォレットから転送を送信しました'
+                };
+            } catch (error) {
+                console.error('Error sending wallet transfer:', error);
+                
+                if (error.code === 4001) {
+                    return {
+                        success: false,
+                        error: 'ユーザーによってトランザクションがキャンセルされました'
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: error.message || 'トランザクションの送信に失敗しました'
+                    };
+                }
+            }
+        }
+        
+        // クイックアドレス設定
+        function setQuickAddress(type) {
+            const addressInput = document.getElementById('recipientAddress');
+            
+            switch(type) {
+                case 'burn':
+                    addressInput.value = '0x0000000000000000000000000000000000000001';
+                    break;
+                case 'test':
+                    addressInput.value = '0x742d35Cc6634C0532925a3b8D2BE2500AAE4b7A6';
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        // 自動更新開始
+        function startAutoRefresh() {
+            if (autoRefreshInterval) return;
+            
+            autoRefreshInterval = setInterval(refreshInfo, 30000); // 30秒ごと
+            alert('自動更新を開始しました（30秒間隔）');
+        }
+        
+        // 自動更新停止
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                alert('自動更新を停止しました');
+            }
+        }
+        
+        // Polygonscanを開く
+        function openPolygonscan() {
+            if (currentAddress) {
+                window.open(`https://polygonscan.com/address/${currentAddress}`, '_blank');
+            } else {
+                alert('アドレス情報を取得してください');
+            }
+        }
+        
+        // JPYCコントラクトを開く
+        function openContract() {
+            window.open('https://polygonscan.com/token/0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB', '_blank');
+        }
+        
+        // ウォレット接続解除
+        function disconnectWallet() {
+            walletConnected = false;
+            walletAddress = null;
+            currentAddress = null;
+            isCorrectNetwork = false;
+            updateWalletUI();
+            
+            // 画面をリセット
+            const infoDiv = document.getElementById('jpyc-info');
+            infoDiv.innerHTML = '<div class="loading">ウォレットを接続してください...</div>';
+            
+            // 転送結果をクリア
+            const resultDiv = document.getElementById('transfer-result');
+            resultDiv.innerHTML = '';
+            
+            alert('ウォレット接続を解除しました');
+        }
+        
+        // アドレスをクリップボードにコピー
+        function copyAddress() {
+            if (currentAddress) {
+                navigator.clipboard.writeText(currentAddress).then(() => {
+                    alert('アドレスをクリップボードにコピーしました');
+                });
+            } else {
+                alert('アドレス情報を取得してください');
+            }
+        }
+    </script>
+</body>
+</html>
