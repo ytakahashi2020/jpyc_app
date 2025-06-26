@@ -312,6 +312,7 @@
             position: relative;
             overflow: hidden;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            min-width: 90px;
         }
         
         .btn::before {
@@ -620,7 +621,7 @@
                         <div class="transfer-section">
                             <div class="input-group">
                                 <input type="number" id="transferAmount" placeholder="寄付金額 (JPYC)" value="1" step="0.000001" min="0">
-                                <button class="btn btn-success" onclick="makeDonation()">寄付する</button>
+                                <button id="donateBtn" class="btn btn-success" onclick="makeDonation()">寄付する</button>
                             </div>
                             <div id="transfer-result"></div>
                         </div>
@@ -819,7 +820,7 @@
             const refreshBtn = document.querySelector('button[onclick="refreshInfo()"]');
             const polygonscanBtn = document.querySelector('button[onclick="openPolygonscan()"]');
             const manualBtn = document.querySelector('button[onclick="openManual()"]');
-            const donateBtn = document.querySelector('button[onclick="makeDonation()"]');
+            const donateBtn = document.getElementById('donateBtn');
             
             if (connectBtn) connectBtn.textContent = `🦊 ${t('connectMetaMask')}`;
             if (disconnectBtn) disconnectBtn.textContent = `🔌 ${t('disconnect')}`;
@@ -1126,7 +1127,7 @@
         async function makeDonation() {
             const amount = parseFloat(document.getElementById('transferAmount').value);
             const resultDiv = document.getElementById('transfer-result');
-            const donateBtn = document.querySelector('button[onclick="makeDonation()"]');
+            const donateBtn = document.getElementById('donateBtn');
             
             // バリデーション
             if (isNaN(amount) || amount <= 0) {
