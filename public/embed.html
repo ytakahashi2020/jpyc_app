@@ -11,12 +11,92 @@
             box-sizing: border-box;
         }
         
+        /* ===================
+           COOL THEME (DEFAULT)
+           =================== */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 8px;
             font-size: 14px;
             line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+        
+        /* ===================
+           CUTE THEME
+           =================== */
+        body.theme-cute {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        }
+        
+        body.theme-cute .container {
+            border: 2px solid #ff69b4;
+            box-shadow: 0 8px 32px rgba(255,105,180,0.3);
+        }
+        
+        body.theme-cute .header {
+            background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        }
+        
+        body.theme-cute .wallet-section {
+            background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        }
+        
+        body.theme-cute .info-grid .info-card {
+            border-left: 4px solid #ec4899;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fef3c7 100%);
+        }
+        
+        body.theme-cute .btn {
+            background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        }
+        
+        body.theme-cute .btn:hover {
+            background: linear-gradient(135deg, #db2777 0%, #ea580c 100%);
+        }
+        
+        body.theme-cute .status.connected {
+            background: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+        }
+        
+        /* ===================
+           PROFESSIONAL THEME
+           =================== */
+        body.theme-professional {
+            font-family: 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        body.theme-professional .container {
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        
+        body.theme-professional .header {
+            background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
+        }
+        
+        body.theme-professional .wallet-section {
+            background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
+        }
+        
+        body.theme-professional .info-grid .info-card {
+            border-left: 4px solid #1e293b;
+            background: #ffffff;
+        }
+        
+        body.theme-professional .btn {
+            background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
+        }
+        
+        body.theme-professional .btn:hover {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        
+        body.theme-professional .status.connected {
+            background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
         }
         
         .container {
@@ -483,8 +563,8 @@
 <body>
     <div class="container" id="main-container">
         <div class="header">
-            <h1>🦊 JPYC Wallet Monitor</h1>
-            <p>MetaMask連携でJPYC情報表示・操作</p>
+            <h1>💝 JPYC寄付ウィジェット</h1>
+            <p>MetaMask連携でJPYC寄付</p>
         </div>
         
         <div class="content">
@@ -521,25 +601,18 @@
                         </div>
                         <button class="btn" onclick="refreshInfo()">🔄 更新</button>
                         <button class="btn btn-secondary" onclick="openPolygonscan()">📊 Polygonscan</button>
+                        <button class="btn btn-secondary" onclick="openManual()">📖 埋め込みマニュアル</button>
                     </div>
                 </div>
                 
                 <!-- 右カラム -->
                 <div class="right-column">
                     <div class="card">
-                        <div class="card-title">💸 転送テスト</div>
+                        <div class="card-title">💝 寄付</div>
                         <div class="transfer-section">
                             <div class="input-group">
-                                <input type="text" id="recipientAddress" placeholder="送信先アドレス (0x...)" style="font-family: 'SF Mono', monospace;">
-                            </div>
-                            <div class="input-group">
-                                <input type="number" id="transferAmount" placeholder="転送金額 (JPYC)" value="1" step="0.000001" min="0">
-                                <button class="btn btn-success" onclick="testTransfer()">送信テスト</button>
-                            </div>
-                            <div class="quick-addresses">
-                                <small>クイック選択</small>
-                                <button class="btn" onclick="setQuickAddress('burn')">🔥 Burn Address</button>
-                                <button class="btn" onclick="setQuickAddress('test')">🧪 Test Address</button>
+                                <input type="number" id="transferAmount" placeholder="寄付金額 (JPYC)" value="1" step="0.000001" min="0">
+                                <button class="btn btn-success" onclick="makeDonation()">寄付する</button>
                             </div>
                             <div id="transfer-result"></div>
                         </div>
@@ -565,22 +638,140 @@
                 symbol: 'MATIC',
                 decimals: 18
             },
-            rpcUrls: ['https://polygon-rpc.com'],
+            rpcUrls: ['https://1rpc.io/matic'],
             blockExplorerUrls: ['https://polygonscan.com']
         };
         
-        // URL パラメーターをチェックしてコンパクトモードを適用
+        // 寄付先アドレス（URLパラメータで指定必須）
+        let donationAddress = null;
+        
+        // 言語設定（デフォルト：日本語）
+        let currentLanguage = 'ja';
+        
+        // 多言語テキスト
+        const i18n = {
+            ja: {
+                title: 'JPYC寄付ウィジェット',
+                subtitle: 'MetaMask連携でJPYC寄付',
+                walletNotConnected: 'ウォレット未接続',
+                walletConnected: 'ウォレット接続済み',
+                connectMetaMask: 'MetaMask接続',
+                disconnect: '接続解除',
+                switchToPolygon: 'Polygonに切り替え',
+                polygonMainnet: 'Polygon Mainnet',
+                wrongNetwork: '間違ったネットワーク',
+                jpycBasicInfo: 'JPYC基本情報',
+                walletAddress: 'ウォレットアドレス',
+                jpycBalance: 'JPYC残高',
+                totalSupply: '総供給量',
+                refresh: '更新',
+                polygonscan: 'Polygonscan',
+                donation: '寄付',
+                donationAmount: '寄付金額 (JPYC)',
+                donate: '寄付する',
+                connectMetaMaskFirst: 'MetaMaskを接続してください',
+                switchToPolygonFirst: 'Polygon Mainnetに切り替えてください',
+                loadingData: 'データを取得中...',
+                validAmountRequired: '有効な金額を入力してください',
+                donationInProgress: '寄付実行中...',
+                donationSuccess: 'ご協力ありがとうございます！',
+                donationFailed: '寄付失敗',
+                communicationError: '通信エラー',
+                metaMaskNotDetected: 'MetaMask未検出',
+                metaMaskRequired: 'MetaMaskがインストールされていません。\\nhttps://metamask.io からインストールしてください。',
+                connectionCancelled: 'ウォレット接続がキャンセルされました。',
+                connectionError: 'ウォレット接続エラーが発生しました。',
+                transactionCancelled: 'ユーザーによってトランザクションがキャンセルされました',
+                transactionFailed: 'トランザクションの送信に失敗しました',
+                lastUpdated: '最終更新',
+                manual: '埋め込みマニュアル',
+                embedError: '埋め込みエラー',
+                embedErrorMessage: '寄付先アドレスが指定されていません。埋め込みコードに ?recipient=0xYourAddress パラメータを追加してください。',
+                embedErrorDetails: '正しい埋め込み方法については、埋め込みマニュアルをご確認ください。'
+            },
+            en: {
+                title: 'JPYC Donation Widget',
+                subtitle: 'JPYC Donation via MetaMask',
+                walletNotConnected: 'Wallet Not Connected',
+                walletConnected: 'Wallet Connected',
+                connectMetaMask: 'Connect MetaMask',
+                disconnect: 'Disconnect',
+                switchToPolygon: 'Switch to Polygon',
+                polygonMainnet: 'Polygon Mainnet',
+                wrongNetwork: 'Wrong Network',
+                jpycBasicInfo: 'JPYC Basic Info',
+                walletAddress: 'Wallet Address',
+                jpycBalance: 'JPYC Balance',
+                totalSupply: 'Total Supply',
+                refresh: 'Refresh',
+                polygonscan: 'Polygonscan',
+                donation: 'Donation',
+                donationAmount: 'Donation Amount (JPYC)',
+                donate: 'Donate',
+                connectMetaMaskFirst: 'Please connect MetaMask',
+                switchToPolygonFirst: 'Please switch to Polygon Mainnet',
+                loadingData: 'Loading data...',
+                validAmountRequired: 'Please enter a valid amount',
+                donationInProgress: 'Processing donation...',
+                donationSuccess: 'Thank you for your contribution!',
+                donationFailed: 'Donation failed',
+                communicationError: 'Communication error',
+                metaMaskNotDetected: 'MetaMask Not Detected',
+                metaMaskRequired: 'MetaMask is not installed.\\nPlease install from https://metamask.io',
+                connectionCancelled: 'Wallet connection was cancelled.',
+                connectionError: 'Wallet connection error occurred.',
+                transactionCancelled: 'Transaction was cancelled by user',
+                transactionFailed: 'Failed to send transaction',
+                lastUpdated: 'Last Updated',
+                manual: 'Embedding Manual',
+                embedError: 'Embedding Error',
+                embedErrorMessage: 'Donation recipient address not specified. Please add ?recipient=0xYourAddress parameter to your embed code.',
+                embedErrorDetails: 'Please check the embedding manual for correct usage.'
+            }
+        };
+        
+        // テキスト取得関数
+        function t(key) {
+            return i18n[currentLanguage][key] || i18n.ja[key] || key;
+        }
+        
+        // URL パラメーターをチェックしてコンパクトモードとテーマを適用
         function checkEmbedMode() {
             const urlParams = new URLSearchParams(window.location.search);
             const mode = urlParams.get('mode');
             const width = urlParams.get('width');
             const height = urlParams.get('height');
+            const theme = urlParams.get('theme');
+            const recipient = urlParams.get('recipient');
+            const lang = urlParams.get('lang');
             
             const container = document.getElementById('main-container');
             
             if (mode === 'compact' || (width && parseInt(width) < 600)) {
                 container.classList.add('compact');
             }
+            
+            // テーマを適用
+            if (theme) {
+                applyTheme(theme);
+            }
+            
+            // 寄付先アドレスを設定
+            if (recipient && recipient.startsWith('0x') && recipient.length === 42) {
+                donationAddress = recipient;
+            } else {
+                // 埋め込み時にアドレスが指定されていない場合はエラー
+                showEmbedError();
+                return;
+            }
+            
+            // 言語を設定
+            if (lang && (lang === 'en' || lang === 'ja')) {
+                currentLanguage = lang;
+            }
+            
+            // UI言語を更新
+            updateLanguage();
             
             // 親ウィンドウからのメッセージを受信
             window.addEventListener('message', function(event) {
@@ -592,6 +783,60 @@
                     }
                 }
             });
+        }
+        
+        // UI言語を更新
+        function updateLanguage() {
+            // ヘッダー部分
+            const titleEl = document.querySelector('.header h1');
+            const subtitleEl = document.querySelector('.header p');
+            if (titleEl) titleEl.textContent = `💝 ${t('title')}`;
+            if (subtitleEl) subtitleEl.textContent = t('subtitle');
+            
+            // カードタイトル
+            const jpycInfoTitle = document.querySelector('.card .card-title');
+            if (jpycInfoTitle && jpycInfoTitle.textContent.includes('JPYC')) {
+                jpycInfoTitle.textContent = `📊 ${t('jpycBasicInfo')}`;
+            }
+            
+            const donationTitle = document.querySelectorAll('.card .card-title')[1];
+            if (donationTitle) {
+                donationTitle.textContent = `💝 ${t('donation')}`;
+            }
+            
+            // ボタンテキスト
+            const connectBtn = document.getElementById('connect-wallet-btn');
+            const disconnectBtn = document.getElementById('disconnect-wallet-btn');
+            const switchBtn = document.getElementById('switch-network-btn');
+            const refreshBtn = document.querySelector('button[onclick="refreshInfo()"]');
+            const polygonscanBtn = document.querySelector('button[onclick="openPolygonscan()"]');
+            const manualBtn = document.querySelector('button[onclick="openManual()"]');
+            const donateBtn = document.querySelector('button[onclick="makeDonation()"]');
+            
+            if (connectBtn) connectBtn.textContent = `🦊 ${t('connectMetaMask')}`;
+            if (disconnectBtn) disconnectBtn.textContent = `🔌 ${t('disconnect')}`;
+            if (switchBtn) switchBtn.textContent = `🔄 ${t('switchToPolygon')}`;
+            if (refreshBtn) refreshBtn.textContent = `🔄 ${t('refresh')}`;
+            if (polygonscanBtn) polygonscanBtn.textContent = `📊 ${t('polygonscan')}`;
+            if (manualBtn) manualBtn.textContent = `📖 ${t('manual')}`;
+            if (donateBtn) donateBtn.textContent = t('donate');
+            
+            // プレースホルダー
+            const amountInput = document.getElementById('transferAmount');
+            if (amountInput) amountInput.placeholder = t('donationAmount');
+        }
+        
+        // テーマを適用する関数
+        function applyTheme(theme) {
+            const body = document.body;
+            body.classList.remove('theme-cool', 'theme-cute', 'theme-professional');
+            
+            if (theme === 'cute') {
+                body.classList.add('theme-cute');
+            } else if (theme === 'professional') {
+                body.classList.add('theme-professional');
+            }
+            // cool theme is default, no class needed
         }
         
         // ページ読み込み時に初回データ取得とMetaMask確認
@@ -614,7 +859,7 @@
             } else {
                 console.log('MetaMask not detected');
                 const connectBtn = document.getElementById('connect-wallet-btn');
-                connectBtn.textContent = '❌ MetaMask未検出';
+                connectBtn.textContent = `❌ ${t('metaMaskNotDetected')}`;
                 connectBtn.disabled = true;
             }
         }
@@ -639,7 +884,7 @@
         // MetaMask接続
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') {
-                alert('MetaMaskがインストールされていません。\\nhttps://metamask.io からインストールしてください。');
+                alert(t('metaMaskRequired'));
                 return;
             }
             
@@ -657,9 +902,9 @@
             } catch (error) {
                 console.error('Error connecting wallet:', error);
                 if (error.code === 4001) {
-                    alert('ウォレット接続がキャンセルされました。');
+                    alert(t('connectionCancelled'));
                 } else {
-                    alert('ウォレット接続エラーが発生しました。');
+                    alert(t('connectionError'));
                 }
             }
         }
@@ -731,7 +976,7 @@
             const switchBtn = document.getElementById('switch-network-btn');
             
             if (walletConnected) {
-                statusEl.textContent = '🟢 ウォレット接続済み';
+                statusEl.textContent = `🟢 ${t('walletConnected')}`;
                 addressEl.textContent = walletAddress;
                 addressEl.className = 'wallet-address';
                 addressEl.style.display = 'block';
@@ -744,7 +989,7 @@
                     switchBtn.style.display = 'inline-block';
                 }
             } else {
-                statusEl.textContent = '🔌 ウォレット未接続';
+                statusEl.textContent = `🔌 ${t('walletNotConnected')}`;
                 addressEl.style.display = 'none';
                 connectBtn.style.display = 'inline-block';
                 disconnectBtn.style.display = 'none';
@@ -761,9 +1006,9 @@
             if (walletConnected) {
                 networkEl.style.display = 'block';
                 if (isCorrectNetwork) {
-                    networkEl.innerHTML = '<span class="network-status network-correct">🟢 Polygon Mainnet</span>';
+                    networkEl.innerHTML = `<span class="network-status network-correct">🟢 ${t('polygonMainnet')}</span>`;
                 } else {
-                    networkEl.innerHTML = '<span class="network-status network-wrong">⚠️ 間違ったネットワーク</span>';
+                    networkEl.innerHTML = `<span class="network-status network-wrong">⚠️ ${t('wrongNetwork')}</span>`;
                 }
             } else {
                 networkEl.style.display = 'none';
@@ -777,17 +1022,17 @@
             
             // ウォレット未接続の場合
             if (!walletConnected) {
-                infoDiv.innerHTML = '<div class="loading">🦊 MetaMaskを接続してください</div>';
+                infoDiv.innerHTML = `<div class="loading">🦊 ${t('connectMetaMaskFirst')}</div>`;
                 return;
             }
             
             // 間違ったネットワークの場合
             if (!isCorrectNetwork) {
-                infoDiv.innerHTML = '<div class="error">⚠️ Polygon Mainnetに切り替えてください</div>';
+                infoDiv.innerHTML = `<div class="error">⚠️ ${t('switchToPolygonFirst')}</div>`;
                 return;
             }
             
-            infoDiv.innerHTML = '<div class="loading">データを取得中...</div>';
+            infoDiv.innerHTML = `<div class="loading">${t('loadingData')}</div>`;
             
             try {
                 // ウォレット専用: 直接MetaMaskから情報取得
@@ -795,28 +1040,29 @@
                 
                 if (result.success) {
                     currentAddress = result.data.address;
+                    const localeOptions = currentLanguage === 'ja' ? 'ja-JP' : 'en-US';
                     infoDiv.innerHTML = `
                         <div class="info-grid">
                             <div class="info-item">
-                                <div class="info-label">ウォレットアドレス</div>
+                                <div class="info-label">${t('walletAddress')}</div>
                                 <div class="info-value address-display">${result.data.address}</div>
                             </div>
                             <div class="info-item">
-                                <div class="info-label">JPYC残高</div>
+                                <div class="info-label">${t('jpycBalance')}</div>
                                 <div class="info-value">${result.data.balance.toLocaleString()} JPYC</div>
                             </div>
                             <div class="info-item">
-                                <div class="info-label">総供給量</div>
+                                <div class="info-label">${t('totalSupply')}</div>
                                 <div class="info-value">${result.data.totalSupply.toLocaleString()} JPYC</div>
                             </div>
                         </div>
-                        <div class="timestamp">最終更新: ${new Date(result.data.timestamp).toLocaleString('ja-JP')}</div>
+                        <div class="timestamp">${t('lastUpdated')}: ${new Date(result.data.timestamp).toLocaleString(localeOptions)}</div>
                     `;
                 } else {
-                    infoDiv.innerHTML = `<div class="error">データ取得エラー: ${result.error}</div>`;
+                    infoDiv.innerHTML = `<div class="error">${t('communicationError')}: ${result.error}</div>`;
                 }
             } catch (error) {
-                infoDiv.innerHTML = `<div class="error">通信エラー: ${error.message}</div>`;
+                infoDiv.innerHTML = `<div class="error">${t('communicationError')}: ${error.message}</div>`;
             }
         }
         
@@ -825,7 +1071,7 @@
             if (!walletConnected || !isCorrectNetwork) {
                 return {
                     success: false,
-                    error: 'ウォレットが接続されていないか、間違ったネットワークです'
+                    error: t('connectMetaMaskFirst')
                 };
             }
             
@@ -872,53 +1118,44 @@
             }
         }
         
-        // 転送テスト
-        async function testTransfer() {
+        // 寄付実行
+        async function makeDonation() {
             const amount = parseFloat(document.getElementById('transferAmount').value);
-            const recipient = document.getElementById('recipientAddress').value.trim();
             const resultDiv = document.getElementById('transfer-result');
             
             // バリデーション
             if (isNaN(amount) || amount <= 0) {
-                resultDiv.innerHTML = '<div class="error">有効な金額を入力してください</div>';
+                resultDiv.innerHTML = `<div class="error">${t('validAmountRequired')}</div>`;
                 return;
             }
             
-            if (!recipient) {
-                resultDiv.innerHTML = '<div class="error">送信先アドレスを入力してください</div>';
+            if (!donationAddress) {
+                resultDiv.innerHTML = `<div class="error">${t('embedErrorMessage')}</div>`;
                 return;
             }
             
-            if (!recipient.startsWith('0x') || recipient.length !== 42) {
-                resultDiv.innerHTML = '<div class="error">有効なEthereumアドレスを入力してください (0x... 42文字)</div>';
-                return;
-            }
-            
-            resultDiv.innerHTML = '<div class="loading">転送実行中...</div>';
+            resultDiv.innerHTML = `<div class="loading">${t('donationInProgress')}</div>`;
             
             try {
                 // ウォレット専用: MetaMaskから直接転送
-                const result = await sendWalletTransfer(amount, recipient);
+                const result = await sendWalletTransfer(amount, donationAddress);
                 
                 if (result.success) {
                     resultDiv.innerHTML = `
                         <div class="success">
-                            <strong>転送成功！</strong><br>
-                            送信先: <span class="address-display">${recipient}</span><br>
-                            金額: ${amount} JPYC<br>
+                            <strong>🙏 ${t('donationSuccess')}</strong><br>
+                            ${currentLanguage === 'ja' ? '寄付金額' : 'Donation Amount'}: ${amount} JPYC<br>
                             Transaction Hash: <span class="address-display">${result.txHash}</span><br>
-                            <a href="https://polygonscan.com/tx/${result.txHash}" target="_blank" class="btn btn-success" style="margin-top: 10px;">📊 Polygonscanで確認</a><br>
-                            ${result.balanceBefore !== undefined ? `送信前残高: ${result.balanceBefore} JPYC<br>` : ''}
-                            ${result.balanceAfter !== undefined ? `送信後残高: ${result.balanceAfter} JPYC` : ''}
+                            <a href="https://polygonscan.com/tx/${result.txHash}" target="_blank" class="btn btn-success" style="margin-top: 10px;">📊 ${t('polygonscan')}</a>
                         </div>
                     `;
-                    // 転送後に情報を更新
+                    // 寄付後に情報を更新
                     setTimeout(refreshInfo, 3000);
                 } else {
-                    resultDiv.innerHTML = `<div class="error">転送失敗: ${result.reason || result.error}</div>`;
+                    resultDiv.innerHTML = `<div class="error">${t('donationFailed')}: ${result.reason || result.error}</div>`;
                 }
             } catch (error) {
-                resultDiv.innerHTML = `<div class="error">通信エラー: ${error.message}</div>`;
+                resultDiv.innerHTML = `<div class="error">${t('communicationError')}: ${error.message}</div>`;
             }
         }
         
@@ -927,7 +1164,7 @@
             if (!walletConnected || !isCorrectNetwork) {
                 return {
                     success: false,
-                    error: 'ウォレットが接続されていないか、間違ったネットワークです'
+                    error: t('connectMetaMaskFirst')
                 };
             }
             
@@ -943,14 +1180,13 @@
                 // transfer(address,uint256) のメソッドシグネチャ
                 const transferData = '0xa9059cbb' + paddedRecipient + paddedAmount;
                 
-                // MetaMaskを通じてトランザクション送信
+                // MetaMaskを通じてトランザクション送信（gasはMetaMaskに自動推定させる）
                 const txHash = await window.ethereum.request({
                     method: 'eth_sendTransaction',
                     params: [{
                         from: walletAddress,
                         to: JPYC_CONTRACT,
                         data: transferData,
-                        gas: '0x5208', // 21000 gas
                     }]
                 });
                 
@@ -965,32 +1201,17 @@
                 if (error.code === 4001) {
                     return {
                         success: false,
-                        error: 'ユーザーによってトランザクションがキャンセルされました'
+                        error: t('transactionCancelled')
                     };
                 } else {
                     return {
                         success: false,
-                        error: error.message || 'トランザクションの送信に失敗しました'
+                        error: error.message || t('transactionFailed')
                     };
                 }
             }
         }
         
-        // クイックアドレス設定
-        function setQuickAddress(type) {
-            const addressInput = document.getElementById('recipientAddress');
-            
-            switch(type) {
-                case 'burn':
-                    addressInput.value = '0x0000000000000000000000000000000000000001';
-                    break;
-                case 'test':
-                    addressInput.value = '0x742d35Cc6634C0532925a3b8D2BE2500AAE4b7A6';
-                    break;
-                default:
-                    break;
-            }
-        }
         
         // 自動更新開始
         function startAutoRefresh() {
@@ -1021,6 +1242,39 @@
         // JPYCコントラクトを開く
         function openContract() {
             window.open('https://polygonscan.com/token/0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB', '_blank');
+        }
+        
+        // 埋め込みマニュアルを開く
+        function openManual() {
+            window.open('/demo.html', '_blank');
+        }
+        
+        // 埋め込みエラーを表示
+        function showEmbedError() {
+            const container = document.getElementById('main-container');
+            container.innerHTML = `
+                <div style="padding: 40px; text-align: center; background: #fee2e2; color: #dc2626; border-radius: 12px; margin: 20px;">
+                    <h2>⚠️ ${t('embedError')}</h2>
+                    <p style="margin: 20px 0; font-size: 16px; line-height: 1.6;">
+                        ${t('embedErrorMessage')}
+                    </p>
+                    <p style="margin: 20px 0; font-size: 14px;">
+                        ${t('embedErrorDetails')}
+                    </p>
+                    <button onclick="window.open('/demo.html', '_blank')" style="
+                        background: #dc2626; 
+                        color: white; 
+                        border: none; 
+                        padding: 12px 24px; 
+                        border-radius: 8px; 
+                        cursor: pointer; 
+                        font-size: 14px;
+                        margin-top: 20px;
+                    ">
+                        📖 ${t('manual')}
+                    </button>
+                </div>
+            `;
         }
         
         // ウォレット接続解除

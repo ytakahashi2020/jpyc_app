@@ -84,7 +84,7 @@
     </style>
 </head>
 <body>
-    <h1>🦊 JPYC Wallet Monitor - 埋め込みデモページ</h1>
+    <h1>💝 JPYC寄付ウィジェット - 埋め込みデモページ</h1>
     
     <div class="demo-section">
         <h2 class="demo-title">📋 基本的な埋め込み方法</h2>
@@ -104,9 +104,10 @@
             <strong>✅ メリット:</strong>
             <ul>
                 <li>コピー&ペーストだけで簡単埋め込み</li>
-                <li>MetaMask連携も完全に動作</li>
+                <li>MetaMask連携でJPYC寄付機能</li>
                 <li>セキュリティが確保される（iframe内で独立動作）</li>
                 <li>あなたのサイトのデザインに影響しない</li>
+                <li>寄付先アドレスをURL パラメータで自由設定可能</li>
             </ul>
         </div>
     </div>
@@ -154,6 +155,67 @@
     </div>
     
     <div class="demo-section">
+        <h2 class="demo-title">🎨 テーマ選択</h2>
+        
+        <h3>🔥 クールテーマ（デフォルト）</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html?theme=cool" 
+                    width="600" 
+                    height="400" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?theme=cool" 
+        width="600" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🌸 可愛いテーマ</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html?theme=cute" 
+                    width="600" 
+                    height="400" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?theme=cute" 
+        width="600" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>📊 真面目テーマ</h3>
+        <div class="embed-container">
+            <iframe src="/embed.html?theme=professional" 
+                    width="600" 
+                    height="400" 
+                    frameborder="0"
+                    class="iframe-demo"
+                    style="border-radius: 8px;">
+            </iframe>
+        </div>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?theme=professional" 
+        width="600" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+    </div>
+    
+    <div class="demo-section">
         <h2 class="demo-title">⚙️ カスタマイズオプション</h2>
         
         <h3>📐 レスポンシブ対応</h3>
@@ -181,6 +243,54 @@
 &lt;/iframe&gt;
         </div>
         <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🎨 テーマ + コンパクト</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?theme=cute&mode=compact" 
+        width="400" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>💝 カスタム寄付先アドレス</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?recipient=0xYourWalletAddress" 
+        width="800" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🌐 言語設定</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?lang=en" 
+        width="800" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <h3>🎯 複数パラメータ組み合わせ</h3>
+        <div class="code-block">
+&lt;iframe src="http://localhost:3001/embed.html?theme=cute&lang=en&recipient=0xYourWalletAddress" 
+        width="800" 
+        height="400" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+        </div>
+        <button class="copy-btn" onclick="copyCode(this.previousElementSibling.textContent)">📋 コピー</button>
+        
+        <div class="note">
+            <strong>💡 パラメータ設定:</strong><br>
+            • <code>recipient</code>: 寄付先ウォレットアドレス（デフォルト: 0x961aEa560D4C38B08D9300D8219062Fe853c8315）<br>
+            • <code>lang</code>: 言語設定（ja=日本語, en=英語, デフォルト: ja）<br>
+            • <code>theme</code>: デザインテーマ（cool/cute/professional, デフォルト: cool）<br>
+            • <code>mode</code>: 表示モード（compact, デフォルト: 通常）
+        </div>
     </div>
     
     <div class="demo-section">
@@ -213,7 +323,7 @@
         
         <div class="note success">
             <strong>🎉 これだけで完了！</strong><br>
-            訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC情報を確認・操作できます。
+            訪問者は埋め込まれたウィジェットから直接MetaMaskでJPYC寄付ができます。
         </div>
     </div>
 
